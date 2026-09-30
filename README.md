@@ -17,7 +17,7 @@ python run.py task_execution  --data gtarena --model MODEL --base-url BASE_URL -
 python run.py defect_judgment --data gtarena --model MODEL --base-url BASE_URL --api-key-env API_KEY --out dj.jsonl
 ```
 
-`--base-url` is the API root that `/chat/completions` is appended to. `--api-key-env` names the environment variable that holds the key, and a local server that needs no key can go without it. Each item is one request at temperature 0 whose message is the prompt followed by the item's images. `--no-screenshot` runs test intention without the screenshot, and that run needs its own output file. Running a command again resumes it. `--max-completion-tokens` (default 8000) sets the answer budget and `--workers` (default 4) the number of parallel requests.
+`--base-url` is the API root that `/chat/completions` is appended to. `--api-key-env` names the environment variable that holds the key, and a local server that needs no key can go without it. Each item is one request whose message is the prompt followed by the item's images. The request sets temperature 0, and an endpoint that rejects the parameter is asked again at its default. `--no-screenshot` runs test intention without the screenshot, and that run needs its own output file. Running a command again resumes it. `--max-completion-tokens` (default 8000) sets the answer budget and `--workers` (default 4) the number of parallel requests.
 
 A reply is read as JSON. An empty reply, or one that does not validate, is asked again, up to three attempts. In task execution and defect judgment, a last reply without the JSON object still counts when it names exactly one action or one label.
 

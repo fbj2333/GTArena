@@ -150,6 +150,8 @@ VERBS = ["double_click", "long_press", "system_button", "action_sequence",
 VERB_RE = re.compile(r"\b(" + "|".join(VERBS) + r")\b")
 CONTROL_RE = re.compile(r"\bc\d{2,4}\b")
 NEEDS_CONTROL = {"click", "double_click", "long_press", "type", "drag"}
+# `type` written as the name of a field: `type: click`, `"type": "click"`, `<type>click</type>`
+TYPE_FIELD_RE = re.compile(r"""\btype\b["'`]?(?=\s*[=:])|</?type>""")
 
 
 def _field(raw: str, name: str) -> str | None:
@@ -164,8 +166,9 @@ def _field(raw: str, name: str) -> str | None:
 def extract_action(raw: str) -> dict | None:
     """Task execution, for a final reply that is not JSON: the action counts only
     when the reply names exactly one verb and, for a verb that needs a control,
-    exactly one control id."""
-    verbs = set(VERB_RE.findall(raw or ""))
+    exactly one control id. `type` written as the name of the field that holds
+    the verb names no action and is not counted."""
+    verbs = set(VERB_RE.findall(TYPE_FIELD_RE.sub(" ", raw or "")))
     if len(verbs) != 1:
         return None
     verb = verbs.pop()
@@ -224,7 +227,8 @@ _THINK = re.compile(r"<think>.*?</think>", re.S | re.I)
 _UNCLOSED = re.compile(r"^.*?</think>", re.S | re.I)
 _FENCE = re.compile(r"```(?:json)?\s*(.*?)\s*```", re.S | re.I)
 _OBJECT = re.compile(r"\{[^{}]*\"label\"\s*:\s*\"(defect|clean)\"[^{}]*\}", re.S | re.I)
-_LINE = re.compile(r"^\s*(?:[-*+]\s+)?[\"'`*]*label[\"'`*]*\s*[:=]\s*[\"'`*]*(defect|clean)\b", re.I | re.M)
+_LINE = re.compile(r"^\s*(?:[-*+]\s+)?[\"'`*]*label[\"'`*]*\s*[:=]\s*[\"'`*]*[ \t]*[\"'`*]*(defect|clean)\b",
+                   re.I | re.M)
 
 
 def _labels_in(text: str) -> list[str]:

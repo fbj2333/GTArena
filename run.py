@@ -150,8 +150,9 @@ VERBS = ["double_click", "long_press", "system_button", "action_sequence",
 VERB_RE = re.compile(r"\b(" + "|".join(VERBS) + r")\b")
 CONTROL_RE = re.compile(r"\bc\d{2,4}\b")
 NEEDS_CONTROL = {"click", "double_click", "long_press", "type", "drag"}
-# `type` written as the name of a field: `type: click`, `"type": "click"`, `<type>click</type>`
-TYPE_FIELD_RE = re.compile(r"""\btype\b["'`]?(?=\s*[=:])|</?type>""")
+# `type` as the name of the field that holds the verb: `type: click`, `"type": "click"`,
+# `<type>click</type>`. In `type: c019` it is the verb.
+TYPE_FIELD_RE = re.compile(r"""\btype\b["'`]?\s*[=:]\s*["'`]?(?=(?:""" + "|".join(VERBS) + r""")\b)|</?type>""")
 
 
 def _field(raw: str, name: str) -> str | None:
@@ -166,8 +167,8 @@ def _field(raw: str, name: str) -> str | None:
 def extract_action(raw: str) -> dict | None:
     """Task execution, for a final reply that is not JSON: the action counts only
     when the reply names exactly one verb and, for a verb that needs a control,
-    exactly one control id. `type` written as the name of the field that holds
-    the verb names no action and is not counted."""
+    exactly one control id. `type` followed by a verb, as in `type: click`, is
+    the name of the field that holds the verb and is not counted."""
     verbs = set(VERB_RE.findall(TYPE_FIELD_RE.sub(" ", raw or "")))
     if len(verbs) != 1:
         return None

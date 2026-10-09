@@ -38,8 +38,8 @@ python score.py defect_judgment --data gtarena --answers dj.jsonl
 ```
 
 - **Coverage** (test intention): the share of the 114 items for which two of the three judges say that the same check would expose the item's defect.
-- **Exact match** (task execution): the share of the 808 questions marked `exact_match_scored` whose answer has the action type and the target of one of the accepted answers. The target is the control, the typed text, the key, the drag direction or the app to open.
-- **Accuracy, recall and specificity** (defect judgment): over all 1,882 items, the share judged correctly, the share of defective items called defect, and the share of clean items called clean.
+- **Exact match** (task execution): the share of the 788 questions marked `exact_match_scored` whose answer has the action type and the target of one of the accepted answers. The target is the control, the typed text, the key, the drag direction or the app to open.
+- **Accuracy, recall and specificity** (defect judgment): over all 1,858 items, the share judged correctly, the share of defective items called defect, and the share of clean items called clean.
 
 An unanswered or malformed answer counts as wrong.
 

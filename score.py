@@ -7,10 +7,10 @@
 
 Test intention    coverage: the share of the 114 items for which two of the
                   three judges say reach "yes" for the same check.
-Task execution    exact match over the 808 questions with exact_match_scored:
+Task execution    exact match over the 788 questions with exact_match_scored:
                   the answer's action type and its target equal one of the
                   question's accepted answers.
-Defect judgment   accuracy, defect recall and specificity over all 1,882 items.
+Defect judgment   accuracy, defect recall and specificity over all 1,858 items.
 
 An item without an answer, or with a malformed one, counts as wrong.
 """

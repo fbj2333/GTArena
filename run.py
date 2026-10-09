@@ -186,6 +186,22 @@ def extract_action(raw: str) -> dict | None:
     return action
 
 
+WRAPPED_ACTIONS = {"click", "double_click", "long_press"}
+TARGET_KEYS = ("target_description", "control_id", "target")
+
+
+def read_wrapped_target(action: dict, raw: str) -> dict:
+    """Task execution, for a click, double_click or long_press whose first level
+    holds no string target (target_description, control_id or target), as in
+    {"type": "click", "target": {"target_description": "c003"}}: the whole reply
+    is read again by extract_action, and that reading is the answer when it
+    gives the same action type. Otherwise the action stands as it was."""
+    if action.get("type") not in WRAPPED_ACTIONS or any(isinstance(action.get(key), str) for key in TARGET_KEYS):
+        return action
+    read = extract_action(raw)
+    return read if read is not None and read["type"] == action["type"] else action
+
+
 def label_from_json(raw: str) -> dict:
     """Defect judgment: a JSON object with exactly `label` and `observed_evidence`,
     or those two fields as two plain lines."""
@@ -274,7 +290,7 @@ def parse_reply(pool: str, raw: str) -> dict:
     if pool == "judge":
         return validate_judgments(parse_json(raw))
     if pool == "task_execution":
-        return validate_action(parse_json(raw))
+        return read_wrapped_target(validate_action(parse_json(raw)), raw)
     return label_from_json(raw)
 
 
